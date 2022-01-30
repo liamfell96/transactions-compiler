@@ -1,25 +1,24 @@
-
 import openpyxl
 import os
 import time
 
-target_dir = 'C:\\Users\\liamh\\OneDrive\\Documents\\Banking\\20-21\\Transactions\\'
-year_workbook = target_dir + 'Year Summary 20-21.xlsx'
-
+target_dir = 'C:\\Users\\liamh\\OneDrive\\Documents\\Banking\\19-20\\'
+year_workbook = target_dir + 'Year Coded Summary 19-20.xlsx'
 
 def main():
     # get files in directory
     files = os.listdir(target_dir)
-    copy_raw_transactions(files)
+
+    copy_coded_transactions(files)
+
     return
 
-
-def copy_raw_transactions(files):
+def copy_coded_transactions(files):
 
     # for each file in directory
     for file in files:
         year_summary_book = openpyxl.load_workbook(year_workbook)
-        if file != "Year Summary 20-21.xlsx":
+        if file != "Year Coded Summary 19-20.xlsx":
             # open month spreadsheet
             try:
                 month_book = openpyxl.load_workbook(target_dir + file)
@@ -27,7 +26,7 @@ def copy_raw_transactions(files):
                 pass
             sheet_names = month_book.sheetnames
             # get raw transactions sheet
-            raw_trans_sheet_month = month_book.get_sheet_by_name(sheet_names[0])
+            raw_trans_sheet_month = month_book.get_sheet_by_name(sheet_names[1])
             # get raw max row and column
             mr = raw_trans_sheet_month.max_row
             mc = raw_trans_sheet_month.max_column
@@ -41,20 +40,22 @@ def copy_raw_transactions(files):
             year_row_pointer = mr_year + 1
             print('year_row_pointer_start_value:' + str(year_row_pointer))
 
-            # loop through raw transactions
+
+            # loop through coded transactions
             # starting from second column to avoid headers
             for i in range(2, mr + 1):
-                for j in range(1, mc + 1):
+
+                for j in range(1, 5):
                     month_cell = raw_trans_sheet_month.cell(row = i, column = j)
                     raw_year_sheet.cell(row = year_row_pointer, column = j).value = month_cell.value
                 # increment year_row_pointer
                 year_row_pointer = year_row_pointer + 1
+
 
             month_book.close()
             year_summary_book.save(year_workbook)
             year_summary_book.close()
             print('year_row_pointer_end_value:' + str(year_row_pointer))
     return
-
 
 main()
